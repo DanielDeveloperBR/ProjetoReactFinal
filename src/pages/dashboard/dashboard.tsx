@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader, IonCardSubtitle, IonCardTitle, IonCardContent, IonButton, IonRouterLink } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonCard, IonCardHeader,IonCardTitle, IonCardContent, IonRouterLink } from '@ionic/react';
 import style from './dashboard.module.css'
 import firebase from '../../../firebaseConfig'
 
@@ -45,12 +45,12 @@ const Dashboard: React.FC = () => {
     <IonPage>
       <IonHeader>
         <IonToolbar color="primary">
-          <IonTitle>Loja de Produtos</IonTitle>
+          <IonTitle>Agendamentos</IonTitle>
         </IonToolbar>
       </IonHeader>
 
       <IonContent className="ion-padding">
-        <h2>Lista de produtos</h2>
+        <h2>Lista de agendamentos</h2>
 
         {produtos.map((produto) => (
           <IonCard key={produto.id}>
