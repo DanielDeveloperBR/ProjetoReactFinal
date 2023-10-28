@@ -49,37 +49,39 @@ const Dashboard: React.FC = () => {
         </IonToolbar>
       </IonHeader>
 
-      <IonContent className="ion-padding">
-        <h2>Lista de agendamentos</h2>
+      <IonContent >
 
+        <h2>Lista de agendamentos</h2>
         {produtos.map((produto) => (
           <IonCard key={produto.id}>
-            <IonCardHeader>
-              <IonCardTitle>{produto.nome}</IonCardTitle>
-            </IonCardHeader>
-            <IonCardContent>
-              <table className={style.tabela}>
-                <thead>
-                  <tr>
-                    <th colSpan={5}>Agendado</th>
-                  </tr>
-                  <tr>
-                    <td>Dia</td>
-                    <td>Mês</td>
-                    <td>Hora</td>
-                    <td>Minutos</td>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>{produto.dia}</td>
-                    <td>{produto.mes}</td>
-                    <td>{produto.hora}</td>
-                    <td>{produto.minutos}</td>
-                  </tr>
-                </tbody>
-              </table>
-            </IonCardContent>
+            <div className={style.container}>
+              <IonCardHeader>
+                <IonCardTitle>{produto.nome}</IonCardTitle>
+              </IonCardHeader>
+              <IonCardContent>
+                <table className={style.tabela}>
+                  <thead>
+                    <tr>
+                      <th colSpan={5}>Agendado</th>
+                    </tr>
+                    <tr>
+                      <td>Dia</td>
+                      <td>Mês</td>
+                      <td>Hora</td>
+                      <td>Minutos</td>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>{produto.dia}</td>
+                      <td>{produto.mes}</td>
+                      <td>{produto.hora}</td>
+                      <td>{produto.minutos}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </IonCardContent>
+            </div>
           </IonCard>
         ))}
         <IonRouterLink routerLink="/home">voltar</IonRouterLink>

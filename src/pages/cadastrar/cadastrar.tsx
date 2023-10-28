@@ -1,10 +1,10 @@
 import { useState } from 'react';
-import { IonButton, IonHeader, IonContent, IonToolbar, IonTitle, IonInput, IonLabel } from '@ionic/react';
+import { IonButton, IonHeader, IonContent, IonToolbar, IonTitle, IonInput, IonLabel, IonRouterLink } from '@ionic/react';
 import firebase from '../../../firebaseConfig';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
 
 function Cadastrar() {
-  const history = useHistory()
+  const navigate = useNavigate()
   const firestore = firebase.firestore();
   const agendamentoReferencia = firestore.collection('agendamento')
   const [formData, setFormData] = useState({
@@ -29,9 +29,16 @@ function Cadastrar() {
       return
     } else {
       agendamentoReferencia.add(formData)
-        .then((docRef: { id: any; }) => {
-          console.log('Dados enviados para o Firebase com ID:', docRef.id);
-          history.push('/dashboard');
+      .then((docRef: { id: any; }) => {
+        console.log('Dados enviados para o Firebase com ID:', docRef.id);
+        setFormData({
+          nome: '',
+          dia: '',
+          mes: '',
+          hora: '',
+          minutos: '',
+        });
+          navigate('/dashboard');
 
         })
         .catch(error => {
@@ -45,20 +52,22 @@ function Cadastrar() {
         <IonToolbar>
           <IonTitle>Agendamento</IonTitle>
         </IonToolbar>
-      </IonHeader><IonContent class="ion-padding">
+      </IonHeader>
+      <IonContent>
         <h1>Agendamento</h1>
         <form onSubmit={handleSubmit}>
-          <IonLabel position="floating">Nome</IonLabel>
-          <IonInput type="text" name="nome" value={formData.nome} onIonChange={handleInputChange}></IonInput>
-          <IonLabel position="floating">Dia</IonLabel>
-          <IonInput type="number" name="dia" value={formData.dia} onIonChange={handleInputChange}></IonInput>
-          <IonLabel position="floating">Mês</IonLabel>
-          <IonInput type="number" name="mes" value={formData.mes} onIonChange={handleInputChange}></IonInput>
-          <IonLabel position="floating">Hora</IonLabel>
-          <IonInput type="number" name="hora" value={formData.hora} onIonChange={handleInputChange}></IonInput>
-          <IonLabel position="floating">Minutos</IonLabel>
-          <IonInput type="number" name="minutos" value={formData.minutos} onIonChange={handleInputChange}></IonInput>
-          <IonButton expand="full" type="submit">Cadastrar</IonButton>
+          <label htmlFor="nome">Nome</label>
+          <input type="text" name="nome" value={formData.nome} onChange={handleInputChange} />
+          <label htmlFor="dia">Dia</label>
+          <input type="text" name="dia" value={formData.dia} onChange={handleInputChange} />
+          <label htmlFor="mes">Mês</label>
+          <input type="text" name="mes" value={formData.mes} onChange={handleInputChange} />
+          <label htmlFor="hora">Hora</label>
+          <input type="text" name="hora" value={formData.hora} onChange={handleInputChange} />
+          <label htmlFor="minutos">Minutos</label>
+          <input type="text" name="minutos" value={formData.minutos} onChange={handleInputChange} />
+          <button type="submit">Agendar</button>
+          <IonRouterLink routerLink='/home'>Voltar</IonRouterLink>
         </form>
       </IonContent>
     </>

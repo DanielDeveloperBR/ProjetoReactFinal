@@ -1,9 +1,10 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonButton, IonLabel, IonItem, IonToast, IonNavLink, IonRouterLink } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonButton, IonLabel, IonToast } from '@ionic/react';
 import firebase from '../../firebaseConfig';
 import { useState } from 'react';
-import { useHistory } from 'react-router';
+import { useNavigate } from 'react-router-dom';
+
 const Home = () => {
-   const history = useHistory();
+   const navigate = useNavigate()
    const [email, setEmail] = useState('');
    const [password, setPassword] = useState('');
    const [showToast, setShowToast] = useState(false);
@@ -12,8 +13,7 @@ const Home = () => {
    const handleLogin = async () => {
       try {
          await firebase.auth().signInWithEmailAndPassword(email, password);
-         setToastMessage("Login bem-sucedido!");
-         history.push("/dashboard");
+         navigate("/dashboard");
       } catch (error) {
          setToastMessage("Usuário ou senha incorretos");
       } finally {
@@ -21,9 +21,12 @@ const Home = () => {
       }
    }
 
-   const teste = async () => {
-      history.push('/cadastrar')
+   const handleNavigateToCadastro = () => {
+      setTimeout(() => {
+         navigate('/cadastrar');
+      }, 100); // Aguarda 100ms antes de redirecionar
    }
+
    return (
       <IonPage>
          <IonHeader>
@@ -32,35 +35,25 @@ const Home = () => {
             </IonToolbar>
          </IonHeader>
          <IonContent className="ion-padding">
-            <IonItem>
-               <IonLabel position="floating">Email:</IonLabel>
-               <IonInput type="text" value={email} onIonChange={e => setEmail(e.detail.value || '')} required />
-            </IonItem>
 
-            <IonItem>
-               <IonLabel position="floating">Senha:</IonLabel>
-               <IonInput
-                  type="password"
-                  value={password}
-                  onIonChange={e => setPassword(e.detail.value || '')}
-                  required
-               />
+            <IonLabel position="floating">Email:</IonLabel>
+            <IonInput type="text" value={email} onIonChange={e => setEmail(e.detail.value || '')} required />
 
-            </IonItem>
+            <IonLabel position="floating">Senha:</IonLabel>
+            <IonInput type="password" value={password} onIonChange={e => setPassword(e.detail.value || '')} required />
 
             <IonButton expand="full" color="secondary" className="ion-margin-top" onClick={handleLogin}>Entrar</IonButton>
+
+            <IonButton expand="full" color="primary" className="ion-margin-top" onClick={handleNavigateToCadastro}>Ainda não é cadastrado?</IonButton>
 
             <IonToast
                isOpen={showToast}
                onDidDismiss={() => setShowToast(false)}
                message={toastMessage}
-               duration={3000}/>
-            <div>
-               <p>Ainda não fez o cadastro? <IonRouterLink routerLink='/cadastrar'>Clica aqui</IonRouterLink></p>
-            </div>
+               duration={3000} />
          </IonContent>
-       
       </IonPage>
    );
 }
+
 export default Home;
