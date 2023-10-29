@@ -11,17 +11,16 @@ function Cadastrar() {
   const agendamentoReferencia = firestore.collection('agendamento');
   const [formData, setFormData] = useState({
     nome: '',
-    data: format(new Date(), 'yyyy-MM'),
+    data: '',
   });
 
 
 
   const handleInputChange = (e: any) => {
-    const { name, data, value } = e.target;
+    const { name, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
-      [data]: value
     });
   };
 
@@ -44,10 +43,9 @@ function Cadastrar() {
       }
 
       console.log("pegando o nome , data... " + formattedDate)
-      agendamentoReferencia
-        .add({
+      agendamentoReferencia.add({
           nome,
-          dia: dataFormatada.getDay(),
+          dia: dataFormatada.getDate(),
           mes: dataFormatada.getMonth() + 1,
           hora: dataFormatada.getHours(),
           minutos: dataFormatada.getMinutes(),
@@ -93,9 +91,7 @@ function Cadastrar() {
                       onIonChange={handleInputChange}
                       presentation="date-time"
                       preferWheel={true}
-                      typeof='string'
-                      min={format(new Date(), 'yyyy-MM-dd')}
-                      max={format(new Date(), 'yyyy-MM')}
+                      min={format(new Date(), 'yyyy-MM-dd')} 
                       hourValues='6,7,8,9,10,11,12,13,14,15,16,17,18'
                     ></IonDatetime>
 
