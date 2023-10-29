@@ -1,51 +1,72 @@
 import { useState } from 'react';
-import { IonButton, IonHeader, IonContent, IonToolbar, IonTitle, IonInput, IonLabel, IonRouterLink } from '@ionic/react';
+import { IonHeader, IonContent, IonToolbar, IonTitle, IonInput, IonLabel, IonRouterLink, IonCol, IonGrid, IonItem, IonRow, IonButton, IonDatetime } from '@ionic/react';
 import firebase from '../../../firebaseConfig';
 import { useNavigate } from 'react-router-dom';
+import { format } from 'date-fns';
+
 
 function Cadastrar() {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const firestore = firebase.firestore();
-  const agendamentoReferencia = firestore.collection('agendamento')
+  const agendamentoReferencia = firestore.collection('agendamento');
   const [formData, setFormData] = useState({
     nome: '',
-    dia: '',
-    mes: '',
-    hora: '',
-    minutos: '',
+    data: format(new Date(), 'yyyy-MM'),
   });
 
+
+
   const handleInputChange = (e: any) => {
-    const { name, value } = e.target;
+    const { name, data, value } = e.target;
     setFormData({
       ...formData,
       [name]: value,
+      [data]: value
     });
   };
-  const handleSubmit = (e: any) => {
-    e.preventDefault()
-    if (formData.nome === "" || formData.dia === "" || formData.mes === "" || formData.hora === "" || formData.minutos === "") {
-      alert("preencha os campos")
-      return
-    } else {
-      agendamentoReferencia.add(formData)
-      .then((docRef: { id: any; }) => {
-        console.log('Dados enviados para o Firebase com ID:', docRef.id);
-        setFormData({
-          nome: '',
-          dia: '',
-          mes: '',
-          hora: '',
-          minutos: '',
-        });
-          navigate('/dashboard');
 
+  const handleSubmit = (e: any) => {
+    e.preventDefault();
+
+    const { nome, data } = formData;
+    console.log("pegando o nome, data... " + formData.nome + " " + formData.data)
+    if (nome === '' || data === '') {
+      alert('Preencha todos os campos');
+      return;
+    }
+
+    try {
+      const formattedDate = `${data}`;
+      const dataFormatada = new Date(formattedDate);
+
+      if (isNaN(dataFormatada.getTime())) {
+        throw new Error('Data ou hora inválida');
+      }
+
+      console.log("pegando o nome , data... " + formattedDate)
+      agendamentoReferencia
+        .add({
+          nome,
+          dia: dataFormatada.getDay(),
+          mes: dataFormatada.getMonth() + 1,
+          hora: dataFormatada.getHours(),
+          minutos: dataFormatada.getMinutes(),
+        })
+        .then((docRef: { id: any }) => {
+          console.log("enviou os dandos: " + formattedDate)
+          console.log("data formatada: " + dataFormatada)
+          console.log('Dados enviados para o Firebase com ID:', docRef.id);
+          navigate('/dashboard');
         })
         .catch(error => {
           console.error('Erro ao enviar dados para o Firebase:', error);
-        })
+        });
+    } catch (error) {
+      console.error('Erro:', error);
+      alert('Data ou hora inválida');
     }
-  }
+  };
+
   return (
     <>
       <IonHeader>
@@ -54,23 +75,43 @@ function Cadastrar() {
         </IonToolbar>
       </IonHeader>
       <IonContent>
-        <h1>Agendamento</h1>
-        <form onSubmit={handleSubmit}>
-          <label htmlFor="nome">Nome</label>
-          <input type="text" name="nome" value={formData.nome} onChange={handleInputChange} />
-          <label htmlFor="dia">Dia</label>
-          <input type="text" name="dia" value={formData.dia} onChange={handleInputChange} />
-          <label htmlFor="mes">Mês</label>
-          <input type="text" name="mes" value={formData.mes} onChange={handleInputChange} />
-          <label htmlFor="hora">Hora</label>
-          <input type="text" name="hora" value={formData.hora} onChange={handleInputChange} />
-          <label htmlFor="minutos">Minutos</label>
-          <input type="text" name="minutos" value={formData.minutos} onChange={handleInputChange} />
-          <button type="submit">Agendar</button>
-          <IonRouterLink routerLink='/home'>Voltar</IonRouterLink>
-        </form>
+        <div>
+          <h1>Agendamento</h1>
+          <form onSubmit={handleSubmit}>
+            <IonGrid>
+              <IonRow>
+                <IonCol size="12" sizeMd="6">
+                  <IonItem>
+                    <IonInput label="Nome" type="text" name="nome" value={formData.nome} onIonChange={handleInputChange} />
+                  </IonItem>
+                </IonCol>
+                <IonCol size="12" sizeMd="6">
+                  <IonItem>
+                    <IonDatetime
+                      aria-label="Data"
+                      name="data"
+                      onIonChange={handleInputChange}
+                      presentation="date-time"
+                      preferWheel={true}
+                      typeof='string'
+                      min={format(new Date(), 'yyyy-MM-dd')}
+                      max={format(new Date(), 'yyyy-MM')}
+                      hourValues='6,7,8,9,10,11,12,13,14,15,16,17,18'
+                    ></IonDatetime>
+
+                  </IonItem>
+                </IonCol>
+              </IonRow>
+            </IonGrid>
+            <IonButton expand="block" type="submit">
+              Enviar
+            </IonButton>
+            <IonRouterLink routerLink="/home">Voltar</IonRouterLink>
+          </form>
+        </div>
       </IonContent>
     </>
-  )
+  );
 }
+
 export default Cadastrar;

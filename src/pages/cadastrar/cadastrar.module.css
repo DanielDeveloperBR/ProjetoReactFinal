@@ -1,0 +1,42 @@
+.containerFormulario{
+    width: 100%;
+    padding: 5px;
+    margin: auto;
+}
+form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    background-color: purple;
+    border-radius: 30px;
+    padding: 10px;
+    max-width: 300px;
+    margin: auto;
+}
+form button {
+    display: inline-block;
+    padding: 10px;
+    background-color: rgb(35, 67, 67);
+    border-radius: 10%;
+    color: white;
+    border: none;
+    margin: 5px;
+    width: 100%;
+}
+form button a {
+    text-decoration: none;
+    color: white;
+}
+form label {
+    color: white;
+}
+form input {
+    border-radius: 10px;
+    width: 100%;
+    max-width: 10em;
+    margin-top: 5px;
+    text-align: center;
+    border: none;
+    padding: 3px;
+}

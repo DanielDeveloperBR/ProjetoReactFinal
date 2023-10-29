@@ -1,4 +1,4 @@
-import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonButton, IonLabel, IonToast } from '@ionic/react';
+import { IonPage, IonHeader, IonToolbar, IonTitle, IonContent, IonInput, IonButton, IonLabel, IonToast, IonRouterLink } from '@ionic/react';
 import firebase from '../../firebaseConfig';
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -44,7 +44,7 @@ const Home = () => {
 
             <IonButton expand="full" color="secondary" className="ion-margin-top" onClick={handleLogin}>Entrar</IonButton>
 
-            <IonButton expand="full" color="primary" className="ion-margin-top" onClick={handleNavigateToCadastro}>Ainda não é cadastrado?</IonButton>
+            <IonRouterLink routerLink='/cadastrar'>Cadastrar</IonRouterLink>
 
             <IonToast
                isOpen={showToast}
