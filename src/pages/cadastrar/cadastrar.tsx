@@ -1,113 +1,56 @@
-import { useState } from 'react';
-import { IonHeader, IonContent, IonToolbar, IonTitle, IonInput, IonLabel, IonRouterLink, IonCol, IonGrid, IonItem, IonRow, IonButton, IonDatetime } from '@ionic/react';
-import firebase from '../../../firebaseConfig';
-import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns';
-
-
-function Cadastrar() {
-  const navigate = useNavigate();
-  const firestore = firebase.firestore();
-  const agendamentoReferencia = firestore.collection('agendamento');
-  const [formData, setFormData] = useState({
-    nome: '',
-    data: '',
-  });
-
-
-
-  const handleInputChange = (e: any) => {
-    const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value,
-    });
-  };
-
-  const handleSubmit = (e: any) => {
-    e.preventDefault();
-
-    const { nome, data } = formData;
-    console.log("pegando o nome, data... " + formData.nome + " " + formData.data)
-    if (nome === '' || data === '') {
-      alert('Preencha todos os campos');
-      return;
-    }
-
-    try {
-      const formattedDate = `${data}`;
-      const dataFormatada = new Date(formattedDate);
-
-      if (isNaN(dataFormatada.getTime())) {
-        throw new Error('Data ou hora inválida');
-      }
-
-      console.log("pegando o nome , data... " + formattedDate)
-      agendamentoReferencia.add({
-          nome,
-          dia: dataFormatada.getDate(),
-          mes: dataFormatada.getMonth() + 1,
-          hora: dataFormatada.getHours(),
-          minutos: dataFormatada.getMinutes(),
-        })
-        .then((docRef: { id: any }) => {
-          console.log("enviou os dandos: " + formattedDate)
-          console.log("data formatada: " + dataFormatada)
-          console.log('Dados enviados para o Firebase com ID:', docRef.id);
-          navigate('/dashboard');
-        })
-        .catch(error => {
-          console.error('Erro ao enviar dados para o Firebase:', error);
-        });
-    } catch (error) {
-      console.error('Erro:', error);
-      alert('Data ou hora inválida');
-    }
-  };
-
-  return (
-    <>
-      <IonHeader>
-        <IonToolbar>
-          <IonTitle>Agendamento</IonTitle>
-        </IonToolbar>
-      </IonHeader>
-      <IonContent>
-        <div>
-          <h1>Agendamento</h1>
-          <form onSubmit={handleSubmit}>
-            <IonGrid>
-              <IonRow>
-                <IonCol size="12" sizeMd="6">
-                  <IonItem>
-                    <IonInput label="Nome" type="text" name="nome" value={formData.nome} onIonChange={handleInputChange} />
-                  </IonItem>
-                </IonCol>
-                <IonCol size="12" sizeMd="6">
-                  <IonItem>
-                    <IonDatetime
-                      aria-label="Data"
-                      name="data"
-                      onIonChange={handleInputChange}
-                      presentation="date-time"
-                      preferWheel={true}
-                      min={format(new Date(), 'yyyy-MM-dd')} 
-                      hourValues='6,7,8,9,10,11,12,13,14,15,16,17,18'
-                    ></IonDatetime>
-
-                  </IonItem>
-                </IonCol>
-              </IonRow>
-            </IonGrid>
-            <IonButton expand="block" type="submit">
-              Enviar
-            </IonButton>
-            <IonRouterLink routerLink="/home">Voltar</IonRouterLink>
-          </form>
+import '../../global.css'
+import style from '../../components/Login.module.css'
+const Cadastrar = () => {
+    return (
+        <div className={style.containerGeral}>
+            <section className={style.agendamento}>
+                <h1>Criar uma conta</h1>
+                <fieldset>
+                    <input type="radio" name="opcao" id="cliente" defaultChecked />
+                    <label htmlFor="cliente">Sou Cliente</label>
+                    <input type="radio" name="opcao" id="empresa" />
+                    <label htmlFor="empresa">Sou Empresa</label>
+                </fieldset>
+            </section>
+            <div className={style.containerForm} id="formularios">
+                {/* Cadastrar usuario cliente  */}
+                <form method="post" className={style.formCadastro} id="formCliente">
+                    <h1>Cadastrar Cliente</h1>
+                    <label htmlFor="nome">Nome</label>
+                    <input type="text" name="nome" placeholder="Seu nome completo" required />
+                    <label htmlFor="senha">Senha</label>
+                    <input type="password" name="senha" placeholder="Senha no máximo 10 caracteres" />
+                    <label htmlFor="repetirSenha">Repetir a senha</label>
+                    <input type="password" name="repetirSenha" placeholder="Digite a sua senha novamente" />
+                    <label htmlFor="email">Email</label>
+                    <input type="email" name="email" placeholder="seuemail@exemplo.com" />
+                    <label htmlFor="cep">CEP</label>
+                    <input type="number" name="cepCliente" maxLength={8} placeholder="Digite apenas números" id="cepCliente" />
+                    <div className={style.containerNovosElementosCliente} ></div>
+                    <button type="submit">Enviar</button>
+                </form>
+                {/* Cadastrar usuario Empresa  */}
+                <form method="post" className={style.formCadastro} id="formEmpresa">
+                    <h1>Cadastrar Empresa</h1>
+                    <label htmlFor="nome">Nome</label>
+                    <input type="text" name="nome" placeholder="Seu nome completo" />
+                    <label htmlFor="empresa">Nome da Empresa</label>
+                    <input type="text" name="empresa" placeholder="O nome da sua empresa" />
+                    <label htmlFor="senha">Senha</label>
+                    <input type="password" name="senha" placeholder="Senha no máximo 10 caracteres" />
+                    <label htmlFor="repetirSenha">Repetir a senha</label>
+                    <input type="password" name="repetirSenha" placeholder="Digite a sua novamente" />
+                    <label htmlFor="email">Email</label>
+                    <input type="email" name="email" placeholder="seuemail@exemplo.com" />
+                    <label htmlFor="cnpj">CNPJ</label>
+                    <input type="number" name="cnpj" placeholder="seuemail@exemplo.com" />
+                    <label htmlFor="cep">CEP</label>
+                    <input type="number" name="cepEmpresa" maxLength={8} placeholder="Digite apenas números" id="cepEmpresa" />
+                    <div className={style.containerNovosElementosEmpresa} ></div>
+                    <button type="submit" >Enviar</button>
+                </form>
+            </div>
         </div>
-      </IonContent>
-    </>
-  );
+    )
 }
-
-export default Cadastrar;
+export default Cadastrar

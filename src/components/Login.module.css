@@ -1,0 +1,204 @@
+@charset "UTF-8";
+
+.bodyForm, .formCadastrar {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.formCadastrar {
+    flex-direction: column;
+}
+
+fieldset label {
+    margin-left: 5px;
+}
+
+.containerLogin {
+    max-height: 600px;
+    border-radius: 10px;
+    min-width: 300px;
+    max-width: 800px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    width: 100%;
+    border: 1px solid rgb(255, 255, 255);
+    box-shadow: 2px 2px 3px rgba(0, 0, 0, 0.445);
+    margin: 20px auto;
+    background-color: var(--diversos);
+    color: white;
+}
+.containerLogin p, .containerLogin a{
+    white-space: nowrap;
+}
+.agendamento{
+    margin-bottom: 0px;
+}
+
+.imgLogin {
+    height: 450px;
+    background-image: url(../img/grafico\ -\ Agenda.png);
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center right;
+    border-right: 1px solid white;
+    border-top-left-radius: 10px;
+    border-bottom-left-radius: 10px;
+    width: 100%;
+}
+
+.imgLogin p {
+    font-size: 20px;
+    color: black;
+}
+
+.formCadastro,
+.formLogin {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    padding: 1.3em;
+    margin: auto;
+    max-width: 18em;
+    width: 100%;
+    border-radius: 2em;
+}
+
+.formCadastro {
+    border: 1px solid white;
+}
+/* cor dos inputs desativados */
+input.cep-info {
+    background-color: #0000002b !important;
+    color: white;
+}
+.formLogin {
+    height: 100%;
+}
+
+.agendamento h1 {
+    margin: 0;
+    margin-bottom: 10px;
+    border-radius: 10px;
+    text-align: center;
+}
+
+form button {
+    width: 100%;
+    padding: 10px;
+    border-radius: 30px;
+}
+
+form input {
+    border-radius: 10px;
+    padding: 10px;
+    margin: 10px auto;
+    width: 100%;
+    border: none;
+    outline: none;
+    color: rgb(0, 0, 0);
+    font-weight: 400;
+}
+
+form label {
+    text-align: center;
+}
+
+.novoUsuario {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.novoUsuario a {
+    margin-left: 0.3em;
+    color: var(--botao);
+}
+
+form input:focus {
+    background-color: var(--telaFundo);
+    outline: 0.15em solid blue;
+    box-shadow: 2px 2px 3px #00000027;
+    color: white;
+    font-weight: 500;
+}
+
+form input:focus::placeholder {
+    color: #ffffff80;
+}
+
+/* Container dos formularios de cadastrar cliente e empresa */
+.containerForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    align-items: center;
+    max-width: 600px;
+    width: 100%;
+    margin: auto;
+}
+input[type="radio"]{
+    margin-left: 10px;
+}
+
+fieldset {
+    text-align: center;
+    border: none;
+    margin-bottom: 20px;
+}
+
+/* Formulario de cadastrar empresa */
+#formEmpresa {
+    display: none;
+    animation: Empresa 0.5s ease-out;
+}
+
+#formCliente {
+    animation: Cliente 0.5s ease-out;
+
+}
+
+@keyframes Cliente {
+    0% {
+        opacity: 0;
+        transform: translateX(20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes Empresa {
+    0% {
+        opacity: 0;
+        transform: translateX(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+#formCliente,
+#formEmpresa {
+    margin: 20px auto;
+}
+
+/* responsividade do login */
+@media all and (max-width: 665px) {
+    .imgLogin {
+        display: none;
+    }
+
+    .containerLogin {
+        width: 50%;
+        background-image: linear-gradient(267deg, black, transparent);
+        white-space: nowrap;
+    }
+}
