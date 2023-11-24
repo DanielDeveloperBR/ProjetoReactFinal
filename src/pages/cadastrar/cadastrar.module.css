@@ -1,0 +1,58 @@
+.container {
+    max-width: 500px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 100%;
+}
+.containerFormulario {
+    width: 100%;
+    padding: 5px;
+    margin: auto;
+}
+
+.container form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    border-radius: 15px;
+    padding: 20px;
+    border: 1px solid black;
+    max-width: 350px;
+    height: 50vh;
+    width: 100%;
+    margin-top: 20px;
+    white-space: nowrap;
+    /* background-image: linear-gradient(90deg, #0d299b, black); */
+}
+.container form ion-button {
+    padding: 10px;
+    color: white;
+    width: 90%;
+    margin-top: 20px;
+}
+
+.container  button a {
+    text-decoration: none;
+    color: white;
+}
+
+.container form ion-label {
+    color: #eee;
+    font-weight: 500;
+    margin-top: 10px;
+}
+
+.container ion-input {
+    width: 100%;
+    margin-top: 20px;
+    border-radius: 10px;
+    /* color: white; */
+}
+
+ion-text{
+    margin-top: 10px;
+}
