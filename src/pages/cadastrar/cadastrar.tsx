@@ -8,9 +8,12 @@ import {
   IonButton,
   IonRadioGroup,
   IonRadio,
+  IonAlert,
+  IonBackButton,
+  IonButtons,
 } from '@ionic/react';
-import { useNavigate } from 'react-router-dom';
-import style from './cadastrar.module.css';
+import { useNavigate } from 'react-router-dom'
+import style from './cadastrar.module.css'
 
 const Cadastrar: React.FC = () => {
   const navigate = useNavigate();
@@ -30,13 +33,13 @@ const Cadastrar: React.FC = () => {
   const [cepValido, setCepValido] = useState(false);
   const [data, setData] = useState<any | null>(null);
   const [section, setSection] = useState(1);
-  let cepAtual: string;
+  const [showAlert, setShowAlert] = useState(false);
 
   useEffect(() => {
-    eventoCep();
+    // Remova o eventoCep do useEffect
   }, [formData.cep, autoFilled]);
 
-  const handleInputChange = (e: any) => {
+  const handleInputChange = async (e: any) => {
     const { name, value } = e.target;
 
     if (autoFilled) {
@@ -47,93 +50,54 @@ const Cadastrar: React.FC = () => {
       ...prevData,
       [name]: value,
     }));
-  };
 
-  const handleRadioChange = (e: any) => {
-    setFormData((prevData) => ({
-      ...prevData,
-      tipo: e.detail.value,
-    }));
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
-
-    const { nome, cep, senha } = formData;
-
-    if (section === 1 && nome === '') {
-      alert('Preencha todos os campos');
-      return;
-    }
-
-    if (section === 2 && senha === '') {
-      alert('Preencha todos os campos');
-      return;
-    }
-
-    try {
-      if (section === 1) {
-        setSection(2);
-      } else if (section === 2) {
-        setSection(3);
-      } else if (section === 3) {
-        const result = await fetch(`http://localhost:3000/cep/${cep}/`);
-        const data = await result.json();
-
-        console.log('Dados do CEP:', data);
-
-        setData(data);
-        setAutoFilled(true);
-        console.log('Dados enviados:', formData);
-        // navigate('/home');
-      }
-    } catch (error) {
-      console.error('Erro:', error);
-      alert('Erro no envio do formulário');
+    if (name === 'cep') {
+      await buscarCEP(value);
     }
   };
 
-  const eventoCep = async () => {
-    cepAtual = formData.tipo === 'cliente' ? 'cepCliente' : 'cepEmpresa';
+  const buscarCEP = async (cep: string) => {
+    const cepElement: any = document.getElementById(
+      formData.tipo === 'cliente' ? 'cepCliente' : 'cepEmpresa'
+    );
 
-    if (cepAtual) {
-      const cepElement: any = document.getElementById(cepAtual);
+    if (cepElement) {
+      cepElement.addEventListener('input', async (event: any) => {
+        const cep = event.detail.value.trim();
+        event.target.value = cep.replace(/-/g, '');
 
-      if (cepElement) {
-        cepElement.addEventListener('ionInput', async (event: any) => {
-          const cep = event.detail.value.trim();
-          event.target.value = cep.replace(/-/g, '');
+        if (cep.length !== 8 || cep.length > 8) {
+          resetarCampos();
+          return;
+        }
 
-          if (cep.length !== 8) {
-            resetarCampos();
-            return;
+        try {
+          const response = await fetch(`http://localhost:3000/cep/${cep}/`, {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+          });
+
+          if (!response.ok) {
+            throw new Error('Erro na solicitação. Status: ' + response.status);
           }
 
-          try {
-            const response = await fetch(`http://localhost:3000/cep/${cep}/`, {
-              method: 'GET',
-              headers: {
-                'Content-Type': 'application/json',
-              },
-            });
+          const result = await response.json();
 
-            if (!response.ok) {
-              throw new Error('Erro na solicitação. Status: ' + response.status);
-            }
-
-            const result = await response.json();
-
-            if (cepAtual === 'cepCliente' || cepAtual === 'cepEmpresa') {
-              preencherCampos(result);
-            } else if (result.erro) {
-              mostrarMensagem('CEP não encontrado');
-            }
-          } catch (error) {
-            resetarCampos();
-            mostrarMensagem('Erro ao buscar CEP');
+          if (
+            formData.tipo === 'cliente' ||
+            formData.tipo === 'empresa'
+          ) {
+            preencherCampos(result);
+          } else if (result.erro) {
+            mostrarMensagem('CEP não encontrado');
           }
-        });
-      }
+        } catch (error) {
+          resetarCampos();
+          mostrarMensagem('Erro ao buscar CEP');
+        }
+      });
     }
   };
 
@@ -169,36 +133,85 @@ const Cadastrar: React.FC = () => {
 
   const criarInput = (labelText: string, inputValue: any, nomeInput: string) => {
     return (
-      <IonInput label={labelText} key={nomeInput} name={nomeInput} value={inputValue} readonly={true} />
+      <IonInput
+        label={labelText}
+        labelPlacement="floating"
+        fill="outline"
+        placeholder={`Digite o seu ${labelText.toLowerCase()}`}
+        name={nomeInput}
+        value={inputValue}
+        readonly
+      />
     );
   };
 
   const mostrarMensagem = (mensagem: string) => {
-    alert(mensagem);
+    setShowAlert(true);
   };
 
-  const isFormValid = () => {
-    if (section === 1) {
-      return formData.nome !== '' && formData.email !== '';
-    } else if (section === 2) {
-      return formData.senha !== '' && formData.repetirSenha !== '';
-    } else if (section === 3) {
-      return cepValido;
+   // Enviar formulario
+   const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    const { nome, cep, senha, repetirSenha } = formData;
+
+    if (section === 1 && nome === '' || section === 2 && senha === '' || section === 3 && cep === '') {
+      alert('Preencha todos os campos');
+      return;
     }
-    return false;
-  };
 
+    if (senha !== repetirSenha) {
+      alert("As senhas não são iguais")
+      return
+    }
+
+    // if (section === 2 && senha === '') {
+    //   alert('Preencha todos os campos');
+    //   return;
+    // }
+
+    try {
+      if (section === 1) {
+        setSection(2);
+      } else if (section === 2) {
+        setSection(3);
+      } else if (section === 3) {
+        const result = await fetch(`http://localhost:3000/cep/${cep}/`);
+        const data = await result.json();
+
+        console.log('Dados do CEP:', data);
+
+        setData(data);
+        setAutoFilled(true);
+        console.log('Dados enviados:', formData);
+        // navigate('/home');
+      }
+    } catch (error) {
+      console.error('Erro:', error);
+      alert('Erro no envio do formulário');
+    }
+  };
   return (
     <>
-      <IonHeader>
+    <IonHeader>
         <IonToolbar>
+          <IonButtons slot="start">
+            <IonBackButton></IonBackButton>
+          </IonButtons>
           <IonTitle>Agendamento Expresso</IonTitle>
         </IonToolbar>
       </IonHeader>
       <IonContent>
+        <IonAlert
+          isOpen={showAlert}
+          onDidDismiss={() => setShowAlert(false)}
+          header={'Atenção'}
+          message={'Preencha todos os campos'}
+          buttons={['OK']}
+        />
         <div className={style.container}>
           <IonTitle>Cadastrar {formData.tipo === 'cliente' ? 'Cliente' : 'Empresa'}</IonTitle>
-          <IonRadioGroup value={formData.tipo} onIonChange={handleRadioChange} className={style.field}>
+          <IonRadioGroup value={formData.tipo} onIonChange={(e) => handleInputChange(e)}>
             <IonRadio name='opcao' value='cliente' id='cliente' labelPlacement='start' alignment='center' className='ion-margin-start'>
               Sou Cliente
             </IonRadio>
@@ -206,7 +219,7 @@ const Cadastrar: React.FC = () => {
               Sou Empresa
             </IonRadio>
           </IonRadioGroup>
-          <form onSubmit={handleSubmit} className={style.containerFormulario}>
+          <form onSubmit={handleSubmit} className={style.containerFormulario} id='formCliente'>
             {section === 1 && (
               <>
                 <IonInput
@@ -287,11 +300,11 @@ const Cadastrar: React.FC = () => {
                 )}
               </>
             )}
-            <IonButton expand="block" type="submit" disabled={!isFormValid()}>
+            <IonButton type="submit">
               Enviar
             </IonButton>
             {section > 1 && (
-              <IonButton expand="block" onClick={() => setSection(section - 1)}>
+              <IonButton onClick={() => setSection(section - 1)}>
                 Voltar
               </IonButton>
             )}
@@ -299,7 +312,7 @@ const Cadastrar: React.FC = () => {
         </div>
       </IonContent>
     </>
-  );
-};
+  )
+}
 
 export default Cadastrar;
